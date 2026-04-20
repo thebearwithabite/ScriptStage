@@ -1,0 +1,66 @@
+"""Voice profile definitions for ScriptStage TTS casting."""
+
+from __future__ import annotations
+
+
+def get_voice_inventory() -> dict:
+    """Return the full voice inventory: native speakers, voice design presets, and narrator default."""
+    return {
+        "native_speakers": [
+            {"id": "dylan",    "label": "Dylan (warm casual)",       "gender": "male",   "age": "young_adult", "quality": "warm_casual",     "tier": 1},
+            {"id": "ryan",     "label": "Ryan (clear neutral)",    "gender": "male",   "age": "adult",       "quality": "clear_neutral",   "tier": 1},
+            {"id": "eric",     "label": "Eric (deep steady)",      "gender": "male",   "age": "adult",       "quality": "deep_steady",     "tier": 1},
+            {"id": "aiden",    "label": "Aiden (bright energetic)", "gender": "male",   "age": "young_adult", "quality": "bright_energetic", "tier": 1},
+            {"id": "uncle_fu", "label": "Uncle Fu (warm gravelly)", "gender": "male",   "age": "older",       "quality": "warm_gravelly",   "tier": 1},
+            {"id": "vivian",   "label": "Vivian (clear bright)",   "gender": "female", "age": "young_adult", "quality": "clear_bright",    "tier": 1},
+            {"id": "serena",   "label": "Serena (warm smooth)",    "gender": "female", "age": "adult",       "quality": "warm_smooth",     "tier": 1},
+            {"id": "ono_anna", "label": "Ono Anna (soft gentle)",  "gender": "female", "age": "young_adult", "quality": "soft_gentle",     "tier": 1},
+            {"id": "sohee",    "label": "Sohee (crisp clear)",     "gender": "female", "age": "young_adult", "quality": "crisp_clear",     "tier": 1},
+        ],
+        "voice_design_presets": [
+            {"id": "vd_male_teen",         "label": "Teen Boy",           "gender": "male",   "age": "young_adult", "tier": 2,
+             "description": "A teenage boy with a slightly cracking, enthusiastic voice"},
+            {"id": "vd_male_gruff",        "label": "Gruff Man",          "gender": "male",   "age": "adult",       "tier": 2,
+             "description": "A gruff middle-aged man with a deep, gravelly voice"},
+            {"id": "vd_male_elderly",      "label": "Elderly Gent",       "gender": "male",   "age": "older",       "tier": 2,
+             "description": "An elderly gentleman with a thin, wavering but kind voice"},
+            {"id": "vd_male_pompous",      "label": "Pompous Man",        "gender": "male",   "age": "adult",       "tier": 2,
+             "description": "A pompous, self-important man with precise enunciation"},
+            {"id": "vd_male_whisper",      "label": "Whisperer",          "gender": "male",   "age": "adult",       "tier": 2,
+             "description": "A mysterious man speaking in a hushed, breathy whisper"},
+            {"id": "vd_male_southern",     "label": "Southern Gent",      "gender": "male",   "age": "adult",       "tier": 2,
+             "description": "A warm Southern gentleman with a slow, honeyed drawl"},
+            {"id": "vd_male_nerdy",        "label": "Nerdy Guy",          "gender": "male",   "age": "young_adult", "tier": 2,
+             "description": "A fast-talking, slightly nasally young man, eager and precise"},
+            {"id": "vd_male_military",     "label": "Military Officer",   "gender": "male",   "age": "adult",       "tier": 2,
+             "description": "A stern, clipped military officer with commanding authority"},
+            {"id": "vd_male_smooth",       "label": "Smooth Operator",    "gender": "male",   "age": "adult",       "tier": 2,
+             "description": "A suave, velvety-smooth man with a late-night radio voice"},
+            {"id": "vd_male_surfer",       "label": "Surfer Dude",        "gender": "male",   "age": "young_adult", "tier": 2,
+             "description": "A laid-back California surfer dude, relaxed and easygoing"},
+            {"id": "vd_female_elderly",    "label": "Elderly Woman",      "gender": "female", "age": "older",       "tier": 2,
+             "description": "An elderly woman with a warm, slightly trembling voice"},
+            {"id": "vd_female_tough",      "label": "Tough Woman",        "gender": "female", "age": "adult",       "tier": 2,
+             "description": "A tough, no-nonsense woman with a sharp, clipped delivery"},
+            {"id": "vd_female_breathy",    "label": "Breathy Woman",      "gender": "female", "age": "young_adult", "tier": 2,
+             "description": "A soft-spoken woman with a dreamy, breathy quality"},
+            {"id": "vd_female_perky",      "label": "Perky Girl",         "gender": "female", "age": "young_adult", "tier": 2,
+             "description": "An upbeat, bubbly young woman with infectious enthusiasm"},
+            {"id": "vd_female_stern",      "label": "Stern Woman",        "gender": "female", "age": "adult",       "tier": 2,
+             "description": "A stern, authoritative woman with measured, precise diction"},
+            {"id": "vd_female_raspy",      "label": "Raspy Woman",        "gender": "female", "age": "adult",       "tier": 2,
+             "description": "A woman with a distinctive raspy, smoky voice"},
+            {"id": "vd_child_boy",         "label": "Young Boy",          "gender": "male",   "age": "child",       "tier": 2,
+             "description": "A young boy around 8 years old, bright and curious"},
+            {"id": "vd_child_girl",        "label": "Young Girl",         "gender": "female", "age": "child",       "tier": 2,
+             "description": "A young girl around 8 years old, sweet and energetic"},
+            {"id": "vd_female_southern",   "label": "Southern Belle",     "gender": "female", "age": "adult",       "tier": 2,
+             "description": "A Southern belle with a charming, melodic accent"},
+            {"id": "vd_female_newscaster", "label": "Newscaster",         "gender": "female", "age": "adult",       "tier": 2,
+             "description": "A polished, professional female newscaster with crisp delivery"},
+        ],
+        "narrator_default": {
+            "id": "eric",
+            "instruct": "Speak in a calm, neutral, measured narration voice",
+        },
+    }

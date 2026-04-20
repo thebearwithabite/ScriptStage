@@ -1,0 +1,41 @@
+{
+  "native_speakers": [
+    {"id": "dylan",    "gender": "male",   "age": "young_adult", "quality": "warm_casual",     "tier": 1, "label": "Dylan (Young Male, warm casual)"},
+    {"id": "ryan",     "gender": "male",   "age": "adult",       "quality": "clear_neutral",   "tier": 1, "label": "Ryan (Male, clear neutral)"},
+    {"id": "eric",     "gender": "male",   "age": "adult",       "quality": "deep_steady",     "tier": 1, "label": "Eric (Male, deep steady)"},
+    {"id": "aiden",    "gender": "male",   "age": "young_adult", "quality": "bright_energetic", "tier": 1, "label": "Aiden (Young Male, bright energetic)"},
+    {"id": "uncle_fu", "gender": "male",   "age": "older",       "quality": "warm_gravelly",   "tier": 1, "label": "Uncle Fu (Older Male, warm gravelly)"},
+    {"id": "vivian",   "gender": "female", "age": "young_adult", "quality": "clear_bright",    "tier": 1, "label": "Vivian (Young Female, clear bright)"},
+    {"id": "serena",   "gender": "female", "age": "adult",       "quality": "warm_smooth",     "tier": 1, "label": "Serena (Female, warm smooth)"},
+    {"id": "ono_anna", "gender": "female", "age": "young_adult", "quality": "soft_gentle",     "tier": 1, "label": "Ono Anna (Female, soft gentle)"},
+    {"id": "sohee",    "gender": "female", "age": "young_adult", "quality": "crisp_clear",     "tier": 1, "label": "Sohee (Female, crisp clear)"}
+  ],
+  "voice_design_presets": [
+    {"id": "vd_male_teen",        "gender": "male",   "age": "teen",        "tier": 2, "description": "A teenage boy with a slightly cracking, enthusiastic voice", "label": "Teen Boy"},
+    {"id": "vd_male_gruff",       "gender": "male",   "age": "middle_aged", "tier": 2, "description": "A gruff middle-aged man with a deep, gravelly voice", "label": "Gruff Man"},
+    {"id": "vd_male_elderly",     "gender": "male",   "age": "elderly",     "tier": 2, "description": "An elderly gentleman with a thin, wavering but kind voice", "label": "Elderly Gentleman"},
+    {"id": "vd_male_pompous",     "gender": "male",   "age": "adult",       "tier": 2, "description": "A pompous, self-important man with precise enunciation", "label": "Pompous Man"},
+    {"id": "vd_male_whisper",     "gender": "male",   "age": "adult",       "tier": 2, "description": "A mysterious man speaking in a hushed, breathy whisper", "label": "Whispering Man"},
+    {"id": "vd_male_southern",    "gender": "male",   "age": "adult",       "tier": 2, "description": "A warm Southern man with a drawling, friendly voice", "label": "Southern Man"},
+    {"id": "vd_male_authoritative","gender": "male",  "age": "middle_aged", "tier": 2, "description": "A commanding, authoritative man with a booming voice", "label": "Authoritative Man"},
+    {"id": "vd_male_nerdy",       "gender": "male",   "age": "young_adult", "tier": 2, "description": "A nerdy young man with a nasally, fast-talking voice", "label": "Nerdy Young Man"},
+    {"id": "vd_male_smooth",      "gender": "male",   "age": "adult",       "tier": 2, "description": "A smooth-talking man with a velvety baritone", "label": "Smooth Baritone"},
+    {"id": "vd_male_rough",       "gender": "male",   "age": "adult",       "tier": 2, "description": "A rough, tough-sounding man with a raspy edge", "label": "Rough Man"},
+    {"id": "vd_female_elderly",   "gender": "female", "age": "elderly",     "tier": 2, "description": "An elderly woman with a warm, slightly trembling voice", "label": "Elderly Woman"},
+    {"id": "vd_female_tough",     "gender": "female", "age": "adult",       "tier": 2, "description": "A tough, no-nonsense woman with a sharp, clipped delivery", "label": "Tough Woman"},
+    {"id": "vd_female_breathy",   "gender": "female", "age": "young_adult", "tier": 2, "description": "A soft-spoken woman with a dreamy, breathy quality", "label": "Breathy Woman"},
+    {"id": "vd_female_perky",     "gender": "female", "age": "young_adult", "tier": 2, "description": "A perky, upbeat young woman with infectious energy", "label": "Perky Woman"},
+    {"id": "vd_female_stern",     "gender": "female", "age": "middle_aged", "tier": 2, "description": "A stern, no-nonsense woman with measured, precise speech", "label": "Stern Woman"},
+    {"id": "vd_female_southern",  "gender": "female", "age": "adult",       "tier": 2, "description": "A charming Southern woman with a honeyed drawl", "label": "Southern Woman"},
+    {"id": "vd_female_husky",     "gender": "female", "age": "adult",       "tier": 2, "description": "A woman with a low, husky, smoky voice", "label": "Husky Woman"},
+    {"id": "vd_child_boy",        "gender": "male",   "age": "child",       "tier": 2, "description": "A young boy around 8 years old, bright and curious", "label": "Boy (child)"},
+    {"id": "vd_child_girl",       "gender": "female", "age": "child",       "tier": 2, "description": "A young girl around 8 years old, sweet and energetic", "label": "Girl (child)"},
+    {"id": "vd_neutral_robot",    "gender": "neutral","age": "adult",       "tier": 2, "description": "A flat, robotic, monotone voice with no emotion", "label": "Robot/AI Voice"}
+  ],
+  "narrator_default": {
+    "id": "eric",
+    "voice_type": "native",
+    "instruct": "Speak in a calm, neutral, measured narration voice",
+    "label": "Narrator (Eric)"
+  }
+}
