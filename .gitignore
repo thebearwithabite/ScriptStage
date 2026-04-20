@@ -17,6 +17,7 @@ runs/
 *.wav
 *.mp3
 *.log
+GEMINI.md
 
 # OS generated files
 .DS_Store
