@@ -244,8 +244,10 @@ def generate_table_read(state):
     log("Loading TTS engine...")
     cache = TTSCache(run_dir / "cache")
     engine = TTSEngine()
+    engine.start_remote_server(log_callback=log)
+    
     if engine._model:
-        log("✓ CustomVoice model loaded")
+        log(f"✓ Connected to {engine.server_url}")
     else:
         log(f"⚠ CustomVoice model not available — {engine._load_error or 'unknown error'}")
     if engine._model_vd:
@@ -343,6 +345,8 @@ def generate_table_read(state):
         json.dump(script.model_dump(), f, indent=2, default=str)
 
     state["chunks"] = [c.model_dump() for c in chunks]
+
+    engine.stop_remote_server(log_callback=log)
 
     elapsed_total = time.time() - t_start
     log(f"✅ Done in {elapsed_total:.1f}s. Output: {run_dir}")
