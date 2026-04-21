@@ -139,7 +139,7 @@ def apply_merges(state):
 def setup_casting(state):
     """Initialize casting from parsed script."""
     if not state or "script" not in state:
-        return state, "No script loaded. Upload and parse first.", "", gr.update(choices=[], value=None)
+        return state, "No script loaded. Upload and parse first.", "", gr.update(choices=[], value=None), gr.update(selected="upload")
 
     script = Script.model_validate(state["script"])
     inventory = get_voice_inventory()
@@ -175,7 +175,7 @@ def setup_casting(state):
     # Narrator dropdown
     narrator_choices = all_voices
 
-    return state, casting_md, json.dumps(casting.model_dump(), indent=2, default=str), gr.update(choices=narrator_choices, value=f"{casting.narrator_voice_id} — {casting.narrator_label}")
+    return state, casting_md, json.dumps(casting.model_dump(), indent=2, default=str), gr.update(choices=narrator_choices, value=f"{casting.narrator_voice_id} — {casting.narrator_label}", allow_custom_value=True), gr.update(selected="casting")
 
 
 def build_casting_display(casting: CastingResult, prominences: dict, script: Script) -> str:
@@ -490,7 +490,7 @@ def build_app():
                 continue_btn.click(
                     setup_casting,
                     inputs=[state],
-                    outputs=[state, casting_md, casting_json_display, narrator_dropdown],
+                    outputs=[state, casting_md, casting_json_display, narrator_dropdown, tabs],
                 )
 
             # ── Tab 3: Generate ───────────────────────────────────────
