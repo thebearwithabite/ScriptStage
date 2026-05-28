@@ -135,7 +135,7 @@ def synthesize(req: TTSRequest):
                 return Response(content=audio_bytes, media_type=media_type)
             except Exception as dramabox_error:
                 print(f"⚠️ Dramabox synthesis failed, falling back to Qwen path: {dramabox_error}")
-                if preferred_backend == "dramabox" and not (cv_model or vd_model):
+                if preferred_backend == "dramabox":
                     raise
 
         audio_list = None
