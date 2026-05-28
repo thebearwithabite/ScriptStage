@@ -36,11 +36,15 @@ def _clean_tag(tag: str) -> str:
     return tag.strip().strip("[]{}").strip().lower()
 
 
+def _is_safe_audio_tag(tag: str) -> bool:
+    return not any(ch in "[]{}" or ord(ch) < 32 or ord(ch) == 127 for ch in tag)
+
+
 def _filter_audio_tags(tags: Iterable[str]) -> list[str]:
     cleaned: list[str] = []
     for tag in tags:
         norm = _clean_tag(tag)
-        if not norm or norm in DISALLOWED_TAGS:
+        if not norm or norm in DISALLOWED_TAGS or not _is_safe_audio_tag(norm):
             continue
         cleaned.append(norm)
     return cleaned
