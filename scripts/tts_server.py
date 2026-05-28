@@ -122,6 +122,13 @@ def synthesize(req: TTSRequest):
             )
 
         preferred_backend = (req.backend or "auto").lower()
+        allowed_backends = {"auto", "dramabox", "qwen"}
+        if preferred_backend not in allowed_backends:
+            raise HTTPException(
+                400,
+                f"Invalid backend '{req.backend}'. Supported values are: auto, dramabox, qwen.",
+            )
+
         if preferred_backend in {"auto", "dramabox"}:
             try:
                 audio_bytes, media_type = _synthesize_dramabox(directed_text)
