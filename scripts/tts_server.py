@@ -147,13 +147,13 @@ def synthesize(req: TTSRequest):
         
         if use_vd and vd_model:
             audio_list, sr = vd_model.generate_voice_design(
-                text=directed_text,
+                text=req.text,
                 instruct=req.instruct or "",
                 language="english"
             )
         elif cv_model:
             audio_list, sr = cv_model.generate_custom_voice(
-                text=directed_text,
+                text=req.text,
                 speaker=req.speaker or "eric",
                 language="english",
                 instruct=req.instruct or None
