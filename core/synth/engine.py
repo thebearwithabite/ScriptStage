@@ -147,7 +147,9 @@ class TTSEngine:
             "text": job.text,
             "voice_type": job.voice_type,
             "speaker": speaker,
-            "instruct": job.instruct or ""
+            "instruct": job.instruct or "",
+            # Prefer Dramabox on the server, while preserving fallback behavior.
+            "backend": os.environ.get("TTS_BACKEND", "auto"),
         }
 
         req = urllib.request.Request(
