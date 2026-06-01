@@ -465,6 +465,8 @@ gradio_proc = subprocess.Popen(
 
 # Wait up to 30s for it to start
 gradio_ok = False
+ui_has_audio = False
+ui_has_captions = False
 log("Waiting for Gradio to start on port 7870...")
 for attempt in range(30):
     time_mod.sleep(2)
@@ -473,8 +475,12 @@ for attempt in range(30):
         if resp.status == 200:
             html = resp.read().decode("utf-8", errors="ignore")
             gradio_ok = True
+            ui_has_audio = "Table Read" in html
+            ui_has_captions = "Captions (SRT)" in html or "Captions (.srt)" in html
             log(f"✅ Gradio responding (attempt {attempt+1}, HTML len={len(html)})")
             log(f"   Title found: {'ScriptStage' in html or 'gradio' in html.lower()}")
+            log(f"   Audio UI present: {ui_has_audio}")
+            log(f"   Captions UI present: {ui_has_captions}")
             break
     except Exception as e:
         if attempt % 5 == 4:
@@ -483,21 +489,26 @@ for attempt in range(30):
 gradio_proc.terminate()
 gradio_proc.wait(timeout=5)
 
-if gradio_ok:
+if gradio_ok and ui_has_audio and ui_has_captions:
     RESULTS.append({
         "stage": "gradio_ui",
         "status": "PASS",
-        "details": {"port": 7870, "attempts": attempt + 1}
+        "details": {"port": 7870, "attempts": attempt + 1, "audio_ui": ui_has_audio, "captions_ui": ui_has_captions}
     })
     log("STAGE 8: ✅ PASS")
 else:
     RESULTS.append({
         "stage": "gradio_ui",
         "status": "FAIL",
-        "details": {"port": 7870, "error": "Did not respond in 60s"}
+        "details": {
+            "port": 7870,
+            "error": "Did not respond in 60s or missing audio/captions UI",
+            "audio_ui": ui_has_audio,
+            "captions_ui": ui_has_captions,
+        }
     })
-    log("STAGE 8: ❌ FAIL — Gradio did not respond in time")
-    FAILURES.append("Gradio UI did not start in 60s")
+    log("STAGE 8: ❌ FAIL — Gradio missing response or audio/captions UI")
+    FAILURES.append("Gradio UI missing response or required audio/captions widgets")
 
 # ─────────────────────────────────────────────────────────────────────
 # WRITE FINAL RESULTS

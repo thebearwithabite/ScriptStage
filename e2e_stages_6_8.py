@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
 ScriptStage — Final E2E: Stages 6-8 (Assembly, Captions, Gradio)
-Uses existing WAV chunks from prior run.
+Uses existing WAV chunks from prior runs and verifies run audio health.
 """
+import argparse
 import os, sys, json, time, wave, struct, subprocess, urllib.request
 from pathlib import Path
 from datetime import datetime
@@ -10,7 +11,6 @@ from datetime import datetime
 os.environ.setdefault("HF_HOME", str(Path.home() / "models"))
 sys.path.insert(0, str(Path(__file__).parent))
 
-PRIOR_RUN = Path(__file__).parent / "runs" / "final_e2e_20260310_003217"
 TS = datetime.now().strftime("%Y%m%d_%H%M%S")
 RUNS_DIR = Path(__file__).parent / "runs"
 RUN_DIR = RUNS_DIR / f"final_e2e_complete_{TS}"
@@ -18,8 +18,6 @@ RUN_DIR.mkdir(parents=True, exist_ok=True)
 (RUN_DIR / "chunks").mkdir(exist_ok=True)
 
 import shutil
-# Copy casting.json
-shutil.copy(PRIOR_RUN / "casting.json", RUN_DIR / "casting.json")
 
 RESULTS = []
 FAILURES = []
@@ -38,10 +36,102 @@ def wav_stats(path):
     silence_ratio = silent / len(samples) if samples else 1.0
     return (int(n / sr * 1000), max_amp, silence_ratio)
 
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Run ScriptStage E2E stages 6-8")
+    parser.add_argument(
+        "--source-run",
+        type=str,
+        default="",
+        help="Specific prior run directory to reuse (defaults to latest valid run)",
+    )
+    parser.add_argument(
+        "--verify-count",
+        type=int,
+        default=5,
+        help="How many recent runs to verify for real audio (default: 5)",
+    )
+    return parser.parse_args()
+
+
+def is_usable_run(run_dir: Path) -> bool:
+    return (
+        run_dir.is_dir()
+        and (run_dir / "casting.json").exists()
+        and (run_dir / "chunks").exists()
+        and any((run_dir / "chunks").glob("*.wav"))
+    )
+
+
+def has_real_audio(run_dir: Path) -> tuple[bool, str]:
+    full_audio = run_dir / "table_read_full.wav"
+    if not full_audio.exists():
+        return False, "missing table_read_full.wav"
+    try:
+        dur_ms, max_amp, silence_ratio = wav_stats(full_audio)
+    except Exception as exc:
+        return False, f"invalid wav ({exc})"
+    if dur_ms < 1000:
+        return False, f"too short ({dur_ms}ms)"
+    if max_amp <= 100:
+        return False, f"silent (max_amp={max_amp})"
+    return True, f"{dur_ms}ms max_amp={max_amp} silence={silence_ratio:.0%}"
+
+
+def discover_runs() -> list[Path]:
+    if not RUNS_DIR.exists():
+        return []
+    return sorted([p for p in RUNS_DIR.iterdir() if p.is_dir()], key=lambda p: p.name, reverse=True)
+
+# ─────────────────────────────────────────────────────────────────────
+# Verify recent runs have real audio and select source run
+# ─────────────────────────────────────────────────────────────────────
+args = parse_args()
+runs = discover_runs()
+if not runs:
+    raise FileNotFoundError(
+        f"No runs found under {RUNS_DIR}. Run a full pipeline once (python e2e_test_final.py) first."
+    )
+
+if args.source_run:
+    source_run = Path(args.source_run)
+    if not source_run.is_absolute():
+        source_run = Path(__file__).parent / source_run
+    if not is_usable_run(source_run):
+        raise FileNotFoundError(f"Specified --source-run is not usable: {source_run}")
+else:
+    source_run = next((r for r in runs if is_usable_run(r)), None)
+    if not source_run:
+        raise FileNotFoundError("No usable prior runs found with casting.json and chunk WAVs")
+
+log("Verifying recent runs for real audio...")
+verified = []
+for run in runs[: max(args.verify_count, 1)]:
+    ok, detail = has_real_audio(run)
+    prefix = "✅" if ok else "❌"
+    log(f"  {prefix} {run.name}: {detail}")
+    verified.append({"run": run.name, "ok": ok, "detail": detail})
+
+RESULTS.append(
+    {
+        "stage": "run_audio_verification",
+        "status": "PASS" if all(v["ok"] for v in verified) else "PARTIAL",
+        "details": {
+            "requested": max(args.verify_count, 1),
+            "checked": len(verified),
+            "passing": sum(1 for v in verified if v["ok"]),
+            "runs": verified,
+        },
+    }
+)
+
+# Copy casting.json from source run
+shutil.copy(source_run / "casting.json", RUN_DIR / "casting.json")
+
 # ─────────────────────────────────────────────────────────────────────
 # Build ChunkResult list from existing WAV files
 # ─────────────────────────────────────────────────────────────────────
-log("Loading existing WAV chunks from prior run...")
+log(f"Loading existing WAV chunks from source run: {source_run.name}")
 
 # The chunks were synthesized for these lines (in order):
 SAMPLE_LINES = [
@@ -67,7 +157,7 @@ SAMPLE_LINES = [
 from core.models import ChunkResult
 
 chunks = []
-wav_files = sorted((PRIOR_RUN / "chunks").glob("*.wav"))
+wav_files = sorted((source_run / "chunks").glob("*.wav"))
 log(f"Found {len(wav_files)} WAV files")
 
 for i, (wav_path, (char, text)) in enumerate(zip(wav_files, SAMPLE_LINES)):

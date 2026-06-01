@@ -210,7 +210,7 @@ def build_casting_display(casting: CastingResult, prominences: dict, script: Scr
 def generate_table_read(state):
     """Generate the full table read audio with captions (generator for streaming log)."""
     if not state or "script" not in state or "casting" not in state:
-        yield state, "❌ No script or casting loaded.", "", None, None, None, None
+        yield state, "❌ No script or casting loaded.", "", None, "", None, None, None
         return
 
     script = Script.model_validate(state["script"])
@@ -238,7 +238,7 @@ def generate_table_read(state):
         type_counts[j.element_type] = type_counts.get(j.element_type, 0) + 1
     log(f"Job breakdown: {', '.join(f'{v} {k}' for k, v in sorted(type_counts.items()))}")
 
-    yield state, "⏳ Synthesizing...", log_text(), None, None, None, None
+    yield state, "⏳ Synthesizing...", log_text(), None, "", None, None, None
 
     # Initialize engine and cache
     log("Loading TTS engine...")
@@ -257,7 +257,7 @@ def generate_table_read(state):
     if not engine._model and not engine._model_vd:
         log("❌ NO TTS MODELS LOADED — all audio will be silent placeholders!")
 
-    yield state, "⏳ Synthesizing...", log_text(), None, None, None, None
+    yield state, "⏳ Synthesizing...", log_text(), None, "", None, None, None
 
     # Synthesize all jobs
     chunks = []
@@ -315,7 +315,7 @@ def generate_table_read(state):
 
         # Yield log update every chunk (Gradio streams it)
         pct = int((i + 1) / len(jobs) * 100)
-        yield state, f"⏳ Synthesizing... {i+1}/{len(jobs)} ({pct}%)", log_text(), None, None, None, None
+        yield state, f"⏳ Synthesizing... {i+1}/{len(jobs)} ({pct}%)", log_text(), None, "", None, None, None
 
     log(f"Synthesis complete. {cache_hits} cache hits, {len(jobs) - cache_hits} synthesized.")
 
@@ -326,7 +326,7 @@ def generate_table_read(state):
     total_dur_ms = sum(c.duration_ms for c in chunks)
     log(f"✓ Assembled {len(chunks)} chunks → {total_dur_ms/1000:.1f}s total audio ({time.time()-t0:.1f}s)")
 
-    yield state, "⏳ Generating captions...", log_text(), None, None, None, None
+    yield state, "⏳ Generating captions...", log_text(), None, "", None, None, None
 
     # Captions
     log("Generating captions...")
@@ -364,6 +364,7 @@ def generate_table_read(state):
         f"✅ Table read generated! {len(chunks)} segments, {total_dur_ms/1000:.1f}s audio in {elapsed_total:.1f}s",
         log_text(),
         str(full_audio_path),
+        srt_content,
         str(srt_path) if srt_path.exists() else None,
         str(json_caps_path) if json_caps_path.exists() else None,
         download_paths,
@@ -515,6 +516,13 @@ def build_app():
                     interactive=False,
                 )
 
+                captions_view = gr.Textbox(
+                    label="Captions (SRT)",
+                    lines=12,
+                    max_lines=24,
+                    interactive=False,
+                )
+
                 gr.Markdown("### 📥 Downloads")
                 with gr.Row():
                     srt_download = gr.File(label="Captions (.srt)", interactive=False)
@@ -524,7 +532,7 @@ def build_app():
                 generate_btn.click(
                     generate_table_read,
                     inputs=[state],
-                    outputs=[state, gen_status, log_viewer, audio_player, srt_download, json_download, download_files],
+                    outputs=[state, gen_status, log_viewer, audio_player, captions_view, srt_download, json_download, download_files],
                 )
         
         # Footer
