@@ -5,23 +5,19 @@ from __future__ import annotations
 import re
 from core.models import Character, Script, ScriptElement
 
-# Extensions to strip from character cues
-_EXTENSIONS = re.compile(
-    r"\s*\("
-    r"(?:CONT'?D|V\.O\.|O\.S\.|O\.C\.|PRE-LAP|CONT'D;\s*V\.O\.|MORE)"
-    r"\)\s*",
-    re.IGNORECASE,
-)
-
 _AGE_PREFIXES = ("YOUNG ", "OLD ", "LITTLE ")
 
 
 def normalize_character_name(raw: str) -> str:
-    """Strip extensions, whitespace, and trailing punctuation from a character cue."""
-    name = _EXTENSIONS.sub("", raw)
-    name = name.strip().strip(":").strip()
+    """Clean up raw character names (e.g. 'JOHN (V.O.)' -> 'JOHN')."""
+    name = raw.upper().strip()
+    # Strip all parentheticals
+    name = re.sub(r"\s*\(.*?\)", "", name)
+    # Strip trailing colons
+    name = name.strip().strip(":")
+    # Collapse multiple spaces
     name = re.sub(r"\s{2,}", " ", name)
-    return name.upper()
+    return name.strip()
 
 
 def _levenshtein(a: str, b: str) -> int:
@@ -39,7 +35,7 @@ def _levenshtein(a: str, b: str) -> int:
 
 
 def suggest_aliases(characters: list[Character]) -> list[tuple[str, str]]:
-    """Find merge candidates: prefix matches (YOUNG X→X) and near-Levenshtein names.
+    """Find merge candidates: prefix matches (YOUNG X->X) and near-Levenshtein names.
 
     Returns list of (source, target) pairs where source should merge into target.
     """
